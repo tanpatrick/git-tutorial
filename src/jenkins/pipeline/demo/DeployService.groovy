@@ -17,8 +17,9 @@ public class DeployService implements Serializable {
 		this.changeService = changeService;
 	}
 
-	def deploy(){
+	def deploy(modifiedDirs){
 		this.steps.echo 'Deploying changes...';
+		this.steps.echo "Modified dirs: ${modifiedDirs}";
 	}
 }
 
