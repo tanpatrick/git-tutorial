@@ -1,10 +1,10 @@
-@Library("demo");
+@Library("demo")
 
-def buildService = new jenkins.pipeline.demo.BuildService(steps,currentBuild);
 def version = "1.0.${currentBuild.number}";
-def modifiedDirs = buildService.retrieveModifiedDirs();
 
 def changeService = new jenkins.pipeline.demo.ChangeService(steps,currentBuild);
+
+def buildService = new jenkins.pipeline.demo.BuildService(steps,currentBuild,changeService);
 def deployService = new jenkins.pipeline.demo.DeployService(steps,currentBuild,changeService);
 
 stage('Build') {
