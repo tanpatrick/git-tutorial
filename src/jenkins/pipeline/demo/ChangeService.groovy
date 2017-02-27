@@ -70,7 +70,7 @@ public class ChangeService implements Serializable {
 			}
 		}
 
-		this.steps.echo "Modified dirs: ${modifiedDirs}";
+		this.steps.echo "Merged modified dirs: ${modifiedDirs}";
 
 		return modifiedDirs;
 	}
