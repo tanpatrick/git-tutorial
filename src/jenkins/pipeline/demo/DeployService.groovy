@@ -20,8 +20,6 @@ public class DeployService implements Serializable {
 	def deploy(modifiedDirs){
 		this.steps.echo 'Deploying changes...';
 		this.steps.echo "Modified dirs: ${modifiedDirs}";
-		
-		this.steps.echo "make jenkins build fail...${changeServiasce}";
 	}
 }
 
