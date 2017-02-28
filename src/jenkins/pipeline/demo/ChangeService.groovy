@@ -17,40 +17,6 @@ public class ChangeService implements Serializable {
 		this.env = env;
 	}
 
-	def retrievePrevModifiedDirs() {
-		this.steps.echo 'Scanning modified dirs [previous builds]...';
-
-		def jobName = this.env.JOB_NAME;
-		def job = jenkins.model.Jenkins.instance.getItem(jobName);
-
-		def previousBuilds = job.getBuilds();
-
-		Set modifiedDirs = new HashSet();
-
-		for(def prevBuild : previousBuilds) {
-			def buildStatus = prevBuild.getResult();
-
-			if(prevBuild.getId() == currentBuild.getId() || buildStatus == null) {
-				// skip current build or if build is in progress
-				continue;
-			} else if("SUCCESS".equals(buildStatus.toString())) {
-				// exit loop once build status is SUCCESS
-				this.steps.echo "Scanning of previous builds modified dirs stopped at build [${prevBuild.id}].";
-				break;
-			} else if("ABORTED".equals(buildStatus.toString()) || "FAILURE".equals(buildStatus.toString())) {
-				this.steps.echo "Scanning build [${prevBuild.id}] ${buildStatus}";
-
-				def buildModifiedDirs = scanChangeLogSets(prevBuild.getChangeSets());
-
-				this.steps.echo "Build [${prevBuild.id}] modified dirs ${buildModifiedDirs}";
-
-				modifiedDirs.addAll(buildModifiedDirs);
-			}
-		}
-
-		return modifiedDirs;
-	}
-
 	def retrieveModifiedDirs() {
 		this.steps.echo 'Scanning modified dirs [current build]...';
 
@@ -82,6 +48,40 @@ public class ChangeService implements Serializable {
 		}
 
 		this.steps.echo "Merged modified dirs: ${modifiedDirs}";
+
+		return modifiedDirs;
+	}
+
+	def retrievePrevModifiedDirs() {
+		this.steps.echo 'Scanning modified dirs [previous builds]...';
+
+		def jobName = this.env.JOB_NAME;
+		def job = jenkins.model.Jenkins.instance.getItem(jobName);
+
+		def previousBuilds = job.getBuilds();
+
+		Set modifiedDirs = new HashSet();
+
+		for(def prevBuild : previousBuilds) {
+			def buildStatus = prevBuild.getResult();
+
+			if(prevBuild.getId() == currentBuild.getId() || buildStatus == null) {
+				// skip current build or if build is in progress
+				continue;
+			} else if("SUCCESS".equals(buildStatus.toString())) {
+				// exit loop once build status is SUCCESS
+				this.steps.echo "Scanning of previous builds modified dirs stopped at build [${prevBuild.id}].";
+				break;
+			} else if("ABORTED".equals(buildStatus.toString()) || "FAILURE".equals(buildStatus.toString())) {
+				this.steps.echo "Scanning build [${prevBuild.id}] [${buildStatus}]";
+
+				def buildModifiedDirs = scanChangeLogSets(prevBuild.getChangeSets());
+
+				this.steps.echo "Build [${prevBuild.id}] modified dirs ${buildModifiedDirs}";
+
+				modifiedDirs.addAll(buildModifiedDirs);
+			}
+		}
 
 		return modifiedDirs;
 	}
