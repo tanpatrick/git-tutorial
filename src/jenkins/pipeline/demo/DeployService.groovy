@@ -20,6 +20,9 @@ public class DeployService implements Serializable {
 	def deploy(modifiedDirs){
 		this.steps.echo 'Deploying changes...';
 		this.steps.echo "Modified dirs: ${modifiedDirs}";
+		
+		this.steps.echo "Sleeping 2 minutes to allow server sufficient time to warm up";
+		this.steps.sleep time: 2, unit: "MINUTES";
 	}
 }
 
