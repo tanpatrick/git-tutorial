@@ -9,12 +9,31 @@ def deployService = new jenkins.pipeline.demo.DeployService(steps,currentBuild,c
 
 def modifiedDirs = changeService.retrieveModifiedDirs();
 
+def deployConfig = [
+	[
+		env: "dev",
+		stage: "DEV"
+	],
+	[
+		env: "sit",
+		stage: "SIT"
+	],
+	[
+		env: "preprod",
+		stage: "PREPROD"
+	],
+	[
+		env: "prod",
+		stage: "PROD"
+	]
+];
+
 stage('Build') {
-	echo 'Started build stage...';
-	buildService.build(modifiedDirs);
+	buildService.build();
 }
 
-stage('Deploy') {
-	echo 'Started deploy stage...';
-	deployService.deploy(modifiedDirs);
+for(def dc : deployConfig){
+	stage(dc.stage){
+		deployService.deploy(dc);
+	}
 }

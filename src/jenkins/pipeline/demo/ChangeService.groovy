@@ -20,7 +20,7 @@ public class ChangeService implements Serializable {
 	def retrieveModifiedDirs() {
 		this.steps.echo 'Scanning modified dirs [current build]...';
 
-		Set modifiedDirs = new HashSet(scanChangeLogSets(currentBuild.getChangeSets()));
+		Set modifiedDirs = new HashSet(scanChangeLogSets(currentBuild.getId(), currentBuild.getChangeSets()));
 
 		this.steps.echo "Current build modified dirs ${modifiedDirs}";
 
@@ -75,7 +75,7 @@ public class ChangeService implements Serializable {
 			} else if("ABORTED".equals(buildStatus.toString()) || "FAILURE".equals(buildStatus.toString())) {
 				this.steps.echo "Scanning build [${prevBuild.id}] [${buildStatus}]";
 
-				def buildModifiedDirs = scanChangeLogSets(prevBuild.getChangeSets());
+				def buildModifiedDirs = scanChangeLogSets(prevBuild.getId(), prevBuild.getChangeSets());
 
 				this.steps.echo "Build [${prevBuild.id}] modified dirs ${buildModifiedDirs}";
 
@@ -86,13 +86,17 @@ public class ChangeService implements Serializable {
 		return modifiedDirs;
 	}
 
-	def scanChangeLogSets(changeLogSets) {
+	def scanChangeLogSets(buildNo, changeLogSets) {
+		this.steps.echo "Scanning build [${buildNo}] change logs...";
+		
 		Set<String> dirs = new HashSet<String>();
 
 		for(def change : changeLogSets) {
 			def entries  = change.items;
 
 			for(def entry : entries) {
+				this.steps.echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}";
+				
 				for(def path : entry.affectedPaths) {
 					def _index = path.indexOf("/");
 

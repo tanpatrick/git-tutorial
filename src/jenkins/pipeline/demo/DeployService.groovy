@@ -17,12 +17,15 @@ public class DeployService implements Serializable {
 		this.changeService = changeService;
 	}
 
-	def deploy(modifiedDirs){
-		this.steps.echo 'Deploying changes...';
-		this.steps.echo "Modified dirs: ${modifiedDirs}";
-		
-		this.steps.echo "Sleeping 2 minutes to allow server sufficient time to warm up";
-		this.steps.sleep time: 2, unit: "MINUTES";
+	def deploy(deployConfig){
+//		this.steps.node("deploy") {
+			this.steps.echo "Deploying changes [${deployConfig.env}]...";
+
+			def modifiedDirs = changeService.retrieveModifiedDirs();
+
+			this.steps.echo "Sleeping 10 seconds to allow server sufficient time to warm up";
+			this.steps.sleep time: 10, unit: "SECONDS";
+//		}
 	}
 }
 

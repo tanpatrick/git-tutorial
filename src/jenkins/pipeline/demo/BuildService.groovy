@@ -9,18 +9,16 @@ public class BuildService implements Serializable {
 
 	def steps;
 	def currentBuild;
-	def changeService;
 
 	public BuildService(steps,currentBuild,changeService){
 		this.steps = steps;
 		this.currentBuild = currentBuild;
-		this.changeService = changeService;
 	}
 
-	def build(modifiedDirs) {
-		this.steps.echo "Building source code...";
-		this.steps.echo "Modified dirs: ${modifiedDirs}";
-		
+	def build() {
+//		this.steps.node("build") {
+			this.steps.echo "Building source code...";
+//		}	
 	}
 }
 
